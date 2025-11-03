@@ -65,6 +65,9 @@ DROP TABLE IF EXISTS orders;
 CREATE TABLE orders(
 	o_id			INT PRIMARY KEY,
     c_id 			INT NOT NULL,
+    date			TIMESTAMP NOT NULL,
+    status 			ENUM("PLACED", "SHIPPED", "CLOSED"),
+    total 			NUMERIC(14,2),
     FOREIGN KEY (c_id) REFERENCES customer(c_id)
 );
 

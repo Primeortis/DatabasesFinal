@@ -2,7 +2,7 @@ use jopking;
 
 DELIMITER //
 
-DROP PROCEDURE IF EXISTS create_employee;
+DROP PROCEDURE IF EXISTS create_employee//
 CREATE PROCEDURE create_employee(
 	IN id 				INT,
     IN email 			VARCHAR(32),
@@ -10,10 +10,13 @@ CREATE PROCEDURE create_employee(
     IN temp_pass 		VARCHAR(32)
 )
 BEGIN
-
+	IF (id IS NOT NULL AND email IS NOT NULL AND username IS NOT NULL AND temp_pass IS NOT NULL) THEN
+		INSERT INTO employee
+			VALUES (id, email, username, temp_pass);
+	END IF;
 END//
 
-DROP PROCEDURE IF EXISTS insert_category;
+DROP PROCEDURE IF EXISTS insert_category//
 CREATE PROCEDURE insert_category(
 	IN name 			VARCHAR(32),
     IN description		VARCHAR(256)
@@ -25,7 +28,7 @@ BEGIN
 	END IF;
 END//
 
-DROP PROCEDURE IF EXISTS log_product_update;
+DROP PROCEDURE IF EXISTS log_product_update//
 CREATE PROCEDURE log_product_update(
 	IN in_product_id 	INT,
     IN in_action_type 	ENUM('INSERT', 'UPDATE', 'DELETE'),
@@ -76,7 +79,7 @@ IF (in_product_id IS NOT NULL) THEN
 END IF;
 END//
 
-DROP PROCEDURE IF EXISTS insert_product;
+DROP PROCEDURE IF EXISTS insert_product//
 CREATE PROCEDURE insert_product(
 	IN id				INT,
     IN name				VARCHAR(32),
@@ -89,7 +92,7 @@ CREATE PROCEDURE insert_product(
     IN e_id				INT
 )
 BEGIN
-	IF(id IS NOT NULL AND name IS NOT NULL AND price IS NOT NULL AND stock IS NOT NULL)
+	IF(id IS NOT NULL AND name IS NOT NULL AND price IS NOT NULL AND stock IS NOT NULL) THEN
 		INSERT INTO product (p_id, name, description, price, stock, adv_thres, image, cat_name)
 			VALUES (id, name, description, price, stock, thres, image, cat_name);
 		CALL log_product_update (
@@ -101,22 +104,56 @@ BEGIN
 	END IF;
 END//
 
-DROP TRIGGER IF EXISTS product_id;
+DROP TRIGGER IF EXISTS product_id//
 CREATE TRIGGER product_id BEFORE UPDATE ON product 
 FOR EACH ROW 
 BEGIN
-
+	SIGNAL SQLSTATE VALUE '45000'
+		SET MESSAGE_TEXT = ' The prod id is not allowed to be changed';
 END//
 
-DROP TRIGGER IF EXISTS product_delete_prevention;
+DROP TRIGGER IF EXISTS product_delete_prevention//
 CREATE TRIGGER product_delete_prevention BEFORE DELETE ON product
 FOR EACH ROW
 BEGIN
-
+	SIGNAL SQLSTATE VALUE '46000'
+		SET MESSAGE_TEXT = ' The prod is not allowed to be deleted';
 END//
 
-DROP PROCEDURE IF EXISTS checkout;
-CREATE PROCEDURE checkout()
+DROP PROCEDURE IF EXISTS checkout//
+CREATE PROCEDURE checkout(
+	IN customer_id 				INT,
+    OUT order_id				INT,
+    OUT out_of_stock_product	INT
+)
 BEGIN
+SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+START TRANSACTION;
 
+INSERT INTO orders
+	VALUES ((SELECT o_id FROM orders ORDER BY o_id DESC LIMIT 1) + 1, customer_id, current_timestamp(), "PLACED", 0.00);
+
+CREATE TABLE temp_cart SELECT * FROM cart_item WHERE cart_item.c_id = customer_id; 
+SET @end_index = (SELECT count(*) FROM temp_cart);
+SET @index = 0;
+
+GetItems: LOOP
+    -- Check if stock is sufficient
+		-- Convert item in temp_cart to order_item
+		-- Remove Stock of Item
+		-- Remove item from cart_items
+    -- Otherwise
+		-- Abort Transaction
+        rollback;
+        set out_of_stock_product = null;
+    SET @index = @index + 1;
+    IF (@index = @end_index) THEN
+		LEAVE GetItems;
+	END IF;
+END LOOP GetItems;
+
+DROP TABLE temp_cart;
+COMMIT;
 END//
+
+DELIMITER ;
