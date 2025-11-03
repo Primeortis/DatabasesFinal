@@ -130,24 +130,38 @@ BEGIN
 SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 START TRANSACTION;
 
+SET @id = (SELECT o_id FROM orders ORDER BY o_id DESC LIMIT 1) + 1;
 INSERT INTO orders
-	VALUES ((SELECT o_id FROM orders ORDER BY o_id DESC LIMIT 1) + 1, customer_id, current_timestamp(), "PLACED", 0.00);
+	VALUES (id, customer_id, current_timestamp(), "PLACED", 0.00);
 
-CREATE TABLE temp_cart SELECT * FROM cart_item WHERE cart_item.c_id = customer_id; 
+CREATE TABLE temp_cart SELECT p_id, quantity, stock, price FROM cart_item NATURAL JOIN product WHERE cart_item.c_id = customer_id; 
+CREATE TABLE item SELECT * FROM temp_cart LIMIT 1;
 SET @end_index = (SELECT count(*) FROM temp_cart);
-SET @index = 0;
+SET @i = 0;
 
 GetItems: LOOP
+	-- How to select the i-th row of the cart
+    -- SELECT * FROM temp_cart LIMIT i, 1;
     -- Check if stock is sufficient
+    SET @new_stock = (SELECT stock FROM item) - (SELECT quantity FROM item);
+    IF (new_stock >= 0) THEN
 		-- Convert item in temp_cart to order_item
+        INSERT INTO order_item VALUES ((SELECT p_id FROM item), id, (SELECT quantity FROM item));
 		-- Remove Stock of Item
+        UPDATE product
+        SET stock = new_stock
+        WHERE p_id = (SELECT p_id FROM item);
 		-- Remove item from cart_items
-    -- Otherwise
+        DELETE FROM cart_items WHERE p_id = (SELECT p_id FROM item) and c_id = customer_id;
+    ELSE
 		-- Abort Transaction
         rollback;
         set out_of_stock_product = null;
-    SET @index = @index + 1;
-    IF (@index = @end_index) THEN
+	END IF;
+    SET @i = @i + 1;
+    DELETE FROM item;
+    INSERT INTO item SELECT * FROM temp_cart limit i, 1;
+    IF (@i = @end_index) THEN
 		LEAVE GetItems;
 	END IF;
 END LOOP GetItems;

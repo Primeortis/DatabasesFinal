@@ -54,6 +54,7 @@ DROP TABLE IF EXISTS cart_item;
 CREATE TABLE cart_item(
 	p_id			INT NOT NULL,
     c_id			INT NOT NULL,
+    quantity		INT NOT NULL DEFAULT 0,
     PRIMARY KEY (p_id, c_id),
     FOREIGN KEY (p_id) REFERENCES product(p_id)
 		ON UPDATE CASCADE,
@@ -75,6 +76,7 @@ DROP TABLE IF EXISTS order_item;
 CREATE TABLE order_item(
 	p_id 			INT NOT NULL,
     o_id			INT NOT NULL,
+    quantity		INT NOT NULL DEFAULT 0,
     PRIMARY KEY (p_id, o_id),
     FOREIGN KEY (p_id) REFERENCES product(p_id)
 		ON UPDATE CASCADE,
