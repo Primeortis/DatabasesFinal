@@ -26,7 +26,7 @@ CREATE TABLE product(
 
 DROP TABLE IF EXISTS customer;
 CREATE TABLE customer(
-	c_id			INT PRIMARY KEY,
+	c_id			INT AUTO_INCREMENT PRIMARY KEY,
     first_name		VARCHAR(32) NOT NULL,
     last_name		VARCHAR(32) NOT NULL,
     email			VARCHAR(32) NOT NULL,
@@ -64,10 +64,10 @@ CREATE TABLE cart_item(
 
 DROP TABLE IF EXISTS orders;
 CREATE TABLE orders(
-	o_id			INT PRIMARY KEY,
+	o_id			INT AUTO_INCREMENT PRIMARY KEY,
     c_id 			INT NOT NULL,
-    date			TIMESTAMP NOT NULL,
-    status 			ENUM("PLACED", "SHIPPED", "CLOSED"),
+    date			TIMESTAMP NOT NULL DEFAULT NOW(),
+    status 			ENUM("PLACED", "SHIPPED", "CLOSED") DEFAULT "PLACED",
     total 			NUMERIC(14,2),
     FOREIGN KEY (c_id) REFERENCES customer(c_id)
 );

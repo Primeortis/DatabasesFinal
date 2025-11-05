@@ -127,17 +127,14 @@ CREATE PROCEDURE checkout(
     OUT out_of_stock_product	INT
 )
 BEGIN
+DECLARE i INT UNSIGNED DEFAULT 0;
 SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 START TRANSACTION;
 
-SET @id = (SELECT o_id FROM orders ORDER BY o_id DESC LIMIT 1) + 1;
-INSERT INTO orders
-	VALUES (id, customer_id, current_timestamp(), "PLACED", 0.00);
+INSERT INTO orders (c_id) VALUES (customer_id);
 
 CREATE TABLE temp_cart SELECT p_id, quantity, stock, price FROM cart_item NATURAL JOIN product WHERE cart_item.c_id = customer_id; 
 CREATE TABLE item SELECT * FROM temp_cart LIMIT 1;
-SET @end_index = (SELECT count(*) FROM temp_cart);
-SET @i = 0;
 
 GetItems: LOOP
 	-- How to select the i-th row of the cart
@@ -146,22 +143,25 @@ GetItems: LOOP
     SET @new_stock = (SELECT stock FROM item) - (SELECT quantity FROM item);
     IF (new_stock >= 0) THEN
 		-- Convert item in temp_cart to order_item
-        INSERT INTO order_item VALUES ((SELECT p_id FROM item), id, (SELECT quantity FROM item));
+        INSERT INTO order_item VALUES ((SELECT p_id FROM item), last_insert_id(), (SELECT quantity FROM item));
 		-- Remove Stock of Item
         UPDATE product
         SET stock = new_stock
         WHERE p_id = (SELECT p_id FROM item);
+        -- Update Total
+        UPDATE orders SET total = total + (SELECT price FROM item) WHERE o_id = last_insert_id();
 		-- Remove item from cart_items
         DELETE FROM cart_items WHERE p_id = (SELECT p_id FROM item) and c_id = customer_id;
     ELSE
 		-- Abort Transaction
         rollback;
-        set out_of_stock_product = null;
+        SET out_of_stock_product = (SELECT p_id FROM item);
 	END IF;
-    SET @i = @i + 1;
+    -- Increment the iterator and get the next item
+    SET i = i + 1;
     DELETE FROM item;
     INSERT INTO item SELECT * FROM temp_cart limit i, 1;
-    IF (@i = @end_index) THEN
+    IF (i = (SELECT count(*) FROM temp_cart)) THEN
 		LEAVE GetItems;
 	END IF;
 END LOOP GetItems;
