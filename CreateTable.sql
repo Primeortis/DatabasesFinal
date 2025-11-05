@@ -77,6 +77,7 @@ CREATE TABLE order_item(
 	p_id 			INT NOT NULL,
     o_id			INT NOT NULL,
     quantity		INT NOT NULL DEFAULT 0,
+    price 			NUMERIC(10,2) DEFAULT 0.00,
     PRIMARY KEY (p_id, o_id),
     FOREIGN KEY (p_id) REFERENCES product(p_id)
 		ON UPDATE CASCADE,

@@ -2,6 +2,9 @@ use jopking;
 
 DELIMITER //
 
+DROP TRIGGER IF EXISTS product_id//
+DROP TRIGGER IF EXISTS product_delete_prevention//
+
 DROP PROCEDURE IF EXISTS create_employee//
 CREATE PROCEDURE create_employee(
 	IN id 				INT,
@@ -45,7 +48,7 @@ BEGIN
 IF (in_product_id IS NOT NULL) THEN
 	CASE
 	-- Handle Updates to Price/Stock
-	WHEN equals(in_action_type, 'UPDATE') THEN
+	WHEN (in_action_type = 'UPDATE') THEN
 		-- Handle Price Changes
 		IF (in_old_price IS NOT NULL AND in_new_price IS NOT NULL AND in_employee_id IS NOT NULL) THEN
 			INSERT INTO price_history VALUES (in_product_id, current_timestamp(), in_old_price, in_new_price, 'UPDATE', in_employee_id);
@@ -62,7 +65,7 @@ IF (in_product_id IS NOT NULL) THEN
 			END IF;
 		END IF;
 	-- Logging Insertion Operations
-	WHEN equals(in_action_type, 'INSERT') THEN
+	WHEN (in_action_type = 'INSERT') THEN
 		IF (in_new_price IS NOT NULL AND in_employee_id IS NOT NULL OR in_new_stock IS NOT NULL) THEN
 			INSERT INTO stock_history (p_id, time, stock_after, operation, e_id)
 				VALUES (in_product_id, current_timestamp(), in_new_stock, 'INSERT', in_employee_id);
@@ -70,7 +73,7 @@ IF (in_product_id IS NOT NULL) THEN
 				VALUES (in_product_id, current_timestamp(), in_new_price, 'INSERT', in_employee_id);
 		END IF;
 	-- Logging Deletions
-	WHEN equals(in_action_type, 'DELETE') THEN
+	WHEN (in_action_type = 'DELETE') THEN
 		IF (in_new_price IS NOT NULL AND in_employee_id IS NOT NULL OR in_new_stock IS NOT NULL) THEN
 			INSERT INTO stock_history (p_id, time, stock_after, operation, e_id)
 				VALUES (in_product_id, current_timestamp(), in_new_stock, 'INSERT', in_employee_id);
