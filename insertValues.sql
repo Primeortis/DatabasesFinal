@@ -1,5 +1,8 @@
-DELETE FROM cart; 
-DELETE FROM cart_item; 
+DROP TRIGGER IF EXISTS product_id;
+DROP TRIGGER IF EXISTS product_delete_prevention;
+
+DELETE FROM cart_item;
+DELETE FROM cart;  
 DELETE FROM category;
 DELETE FROM order_item;
 DELETE FROM orders;
@@ -40,7 +43,7 @@ CALL insert_product (10, "Broom", "Sweep up that mess", 12.25, 6, 5, "/images/br
 INSERT INTO cart(c_id) VALUES (1), (2), (3);
 
 -- Add Items to carts
-INSERT INTO cart_item VALUES (1, 2, 2);
+INSERT INTO cart_item VALUES (1, 2, 50);
 INSERT INTO cart_item VALUES (7, 2, 1);
 INSERT INTO cart_item VALUES (9, 2, 1);
 

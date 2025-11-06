@@ -68,7 +68,7 @@ CREATE TABLE orders(
     c_id 			INT NOT NULL,
     date			TIMESTAMP NOT NULL DEFAULT NOW(),
     status 			ENUM("PLACED", "SHIPPED", "CLOSED") DEFAULT "PLACED",
-    total 			NUMERIC(14,2),
+    total 			NUMERIC(14,2) DEFAULT 0.00,
     FOREIGN KEY (c_id) REFERENCES customer(c_id)
 );
 
@@ -104,8 +104,8 @@ DROP TABLE IF EXISTS stock_history;
 CREATE TABLE stock_history(
     p_id			INT NOT NULL,
     time			TIMESTAMP NOT NULL,
-    stock_before	NUMERIC(8) DEFAULT 0,
-    stock_after		NUMERIC(8) DEFAULT 0,
+    stock_before	INT DEFAULT 0,
+    stock_after		INT DEFAULT 0,
     operation		ENUM('INSERT', 'UPDATE', 'DELETE'),
 	o_id 			INT DEFAULT NULL,
     c_id			INT DEFAULT NULL,
