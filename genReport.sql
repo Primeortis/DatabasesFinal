@@ -1,7 +1,7 @@
 USE jopking;
 
 -- a) Historic prices
--- SET @target_product = 101;
+SET @target_product = 1;
 SELECT
     ph.p_id AS product_id,
     p.name AS product_name,
@@ -18,8 +18,8 @@ ORDER BY ph.time DESC;
 
 
 -- b) Highest and lowest prices within a given period
--- SET @start_date = '2024-01-01';
--- SET @end_date = '2024-12-31';
+SET @start_date = '2024-01-01';
+SET @end_date = '2024-12-31';
 SELECT
     p.p_id AS product_id,
     p.name AS product_name,
@@ -33,8 +33,8 @@ ORDER BY p.name;
 
 
 -- c) How many quantities sold for each product within a given period (ignore unsold)
--- SET @start_period = '2024-01-01';
--- SET @end_period = '2024-12-31';
+SET @start_period = '2024-01-01';
+SET @end_period = '2024-12-31';
 SELECT
     oi.p_id AS product_id,
     p.name AS product_name,
