@@ -2,6 +2,7 @@ use jopking;
 
 DELIMITER //
 
+
 DROP PROCEDURE IF EXISTS create_employee//
 CREATE PROCEDURE create_employee(
 	IN id 				INT,
@@ -132,6 +133,7 @@ BEGIN
 DECLARE i INT UNSIGNED DEFAULT 0;
 DECLARE new_stock INT DEFAULT 0;
 SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET autocommit = 0;
 START TRANSACTION;
 
 CREATE TABLE temp_cart (
@@ -160,10 +162,9 @@ PreCheck: LOOP
 	LEAVE PreCheck;
 END LOOP PreCheck;
 
-INSERT INTO orders (c_id) VALUES (customer_id);
-SET i = 0;
-
 IF (out_of_stock_product IS NULL) THEN
+	INSERT INTO orders (c_id) VALUES (customer_id);
+	SET i = 0;
 	GetItems: LOOP
 		-- Check if stock is sufficient
 		SET new_stock = (SELECT stock FROM item) - (SELECT quantity FROM item);
@@ -198,6 +199,9 @@ IF (out_of_stock_product IS NULL) THEN
 ELSE
 	rollback;
 END IF;
+
+DROP TABLE IF EXISTS temp_cart;
+DROP TABLE IF EXISTS item;
 
 END//
 

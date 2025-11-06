@@ -17,18 +17,21 @@ DELETE FROM product;
 -- Add the Employees
 CALL create_employee (1, "employOne", "empone@gmail.com", "testPass1");
 CALL create_employee (2, "employTwo", "emptwo@gmail.com", "testPass2");
+select e_id, email, username, sha2(password, 256) from employee;
 
 -- Add the Customers
 INSERT INTO customer (c_id, first_name, last_name, email, username, password, address) VALUES 
 	(1, "Ann", "Marie", "am@mtu.edu", "annMarie", "password", "1701 Townsend Dr, Houghton, MI 49931"),
 	(2, "Bob", "Seger", "bs@mtu.edu", "bobSeger", "ThisIsSecure", "1702 Hillside Dr, Hancock, MI 49931"),
 	(3, "Tom", "Hanks", "th@gmail.com", "tomHanks", "TommyIzCool", "1513 Jefferson Rd, Hancock, MI 49931");
+select c_id, first_name, last_name, email, username, sha2(password, 256), address from customer;
 
 -- Make the Categories
 CALL insert_category ("Electronics", "Technology to make your house modern!");
 CALL insert_category ("Food", "The basic necessity of life!");
 CALL insert_category ("Home Cleaning", "Germaphobe’s friend!");
 CALL insert_category ("Pet Care", "Take care of your fluffy friends!");
+select * from category;
 
 -- Insert Products
 CALL insert_product (1, "Banana", "Yellow Fruit", 0.99, 35, 50, "/images/banana.png", "Food", 1);
@@ -41,8 +44,11 @@ CALL insert_product (7, "Fitbit", "Step Counting Watch", 74.99, 1, 3, "/images/f
 CALL insert_product (8, "Lettuce", "Eww green food", 7.99, 2, 5, "/images/lettuce.png", "Food", 2);
 CALL insert_product (9, "Bread", "Slap some butter on it", 6.50, 45, 60, "/images/bread.png", "Food", 1);
 CALL insert_product (10, "Broom", "Sweep up that mess", 12.25, 6, 5, "/images/broom.png", "Home Cleaning", 2);
+UPDATE product SET discontinued = 1 WHERE p_id = 7;
+select * from product;
 
 INSERT INTO cart(c_id) VALUES (1), (2), (3);
+select * from cart;
 
 -- Add Items to carts
 INSERT INTO cart_item VALUES (1, 2, 50);
@@ -52,6 +58,7 @@ INSERT INTO cart_item VALUES (9, 2, 1);
 INSERT INTO cart_item VALUES (8, 1, 2);
 INSERT INTO cart_item VALUES (10, 1, 1);
 INSERT INTO cart_item VALUES (6, 1, 5);
+select * from cart_item;
 
 -- Add Orders
 INSERT INTO orders (c_id, date, status, total) VALUES
@@ -65,6 +72,7 @@ INSERT INTO orders (c_id, date, status, total) VALUES
 	(2, "2025-10-12 15:18:00", 'SHIPPED', 260.00),
 	(1, "2025-10-13 12:05:00", 'SHIPPED', 40.97),
 	(2, "2025-10-13 16:00:00", 'SHIPPED', 2499.95);
+select * from orders;
 
 -- pid, oid, quan
 INSERT INTO order_item VALUES
@@ -83,3 +91,4 @@ INSERT INTO order_item VALUES
 	(6, 9, 1, 24.99),
 	(7, 9, 2, 7.99),
 	(4, 10, 5, 499.99);
+select * from order_item;
