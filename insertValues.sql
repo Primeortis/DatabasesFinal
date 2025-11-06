@@ -1,3 +1,5 @@
+USE jopking;
+
 DROP TRIGGER IF EXISTS product_id;
 DROP TRIGGER IF EXISTS product_delete_prevention;
 
