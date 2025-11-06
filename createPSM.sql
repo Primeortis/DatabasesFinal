@@ -154,7 +154,7 @@ PreCheck: LOOP
     SET i = i + 1;
     DROP TABLE IF EXISTS item;
     CREATE TABLE item SELECT * FROM temp_cart limit i, 1;
-    IF (i = (SELECT count(p_id) FROM temp_cart)) THEN
+    IF (i = (SELECT count(p_id) FROM temp_cart) OR out_of_stock_product IS NOT NULL) THEN
 		LEAVE PreCheck;
 	END IF;
 	LEAVE PreCheck;
