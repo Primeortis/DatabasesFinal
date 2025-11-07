@@ -2,7 +2,6 @@ use jopking;
 
 DELIMITER //
 
-
 DROP PROCEDURE IF EXISTS create_employee//
 CREATE PROCEDURE create_employee(
 	IN id 				INT,
@@ -149,7 +148,7 @@ SELECT p_id, quantity, stock, price
 FROM cart_item 
 NATURAL JOIN product 
 WHERE cart_item.c_id = customer_id; 
-CREATE TABLE item SELECT * FROM temp_cart LIMIT 1;
+CREATE TABLE item SELECT * FROM temp_cart ORDER BY p_id LIMIT 1;
 
 PreCheck: LOOP
 	IF ((SELECT stock FROM item) - (SELECT quantity FROM item) < 0) THEN
@@ -158,7 +157,7 @@ PreCheck: LOOP
     -- Increment the iterator and get the next item
     SET i = i + 1;
     DROP TABLE IF EXISTS item;
-    CREATE TABLE item SELECT * FROM temp_cart limit i, 1;
+    CREATE TABLE item SELECT * FROM temp_cart ORDER BY p_id limit i, 1;
     IF (i = (SELECT count(p_id) FROM temp_cart) OR out_of_stock_product IS NOT NULL) THEN
 		LEAVE PreCheck;
 	END IF;
@@ -168,31 +167,26 @@ END LOOP PreCheck;
 IF (out_of_stock_product IS NULL) THEN
 	INSERT INTO orders (c_id) VALUES (customer_id);
 	SET i = 0;
+    DROP TABLE IF EXISTS item;
+    CREATE TABLE item SELECT * FROM temp_cart ORDER BY p_id LIMIT 1;
 	GetItems: LOOP
 		-- Check if stock is sufficient
 		SET new_stock = (SELECT stock FROM item) - (SELECT quantity FROM item);
-		IF (new_stock >= 0) THEN
-			-- Convert item in temp_cart to order_item
-			INSERT INTO order_item VALUES ((SELECT p_id FROM item), last_insert_id(), (SELECT quantity FROM item), (SELECT price FROM item));
-			-- Remove Stock of Item
-			UPDATE product
-			SET stock = new_stock
-			WHERE p_id = (SELECT p_id FROM item);
-			-- Update Total
-			UPDATE orders SET total = (total + (SELECT price * quantity FROM item)) WHERE o_id = last_insert_id();
-			-- Remove item from cart_items
-			DELETE FROM cart_item WHERE p_id = (SELECT p_id FROM item) and c_id = customer_id;
-		ELSE
-			-- Abort Transaction
-			rollback;
-		END IF;
-		-- Increment the iterator and get the next item
+		-- Convert item in temp_cart to order_item
+		INSERT INTO order_item VALUES ((SELECT p_id FROM item), last_insert_id(), (SELECT quantity FROM item), (SELECT price FROM item));
+		-- Remove Stock of Item
+		UPDATE product SET stock = new_stock WHERE p_id = (SELECT p_id FROM item);
+		-- Update Total
+		UPDATE orders SET total = (total + (SELECT price * quantity FROM item)) WHERE o_id = last_insert_id();
+		-- Remove item from cart_items
+		DELETE FROM cart_item WHERE p_id = (SELECT p_id FROM item) and c_id = customer_id;
+		-- Increment the iterator and get the next item */
 		SET i = i + 1;
-		DROP TABLE IF EXISTS item;
-		CREATE TABLE item SELECT * FROM temp_cart limit i, 1;
-		IF (i = (SELECT count(p_id) FROM temp_cart)) THEN
+		IF (i >= (SELECT count(p_id) FROM temp_cart)) THEN
 			LEAVE GetItems;
 		END IF;
+		DROP TABLE IF EXISTS item;
+		CREATE TABLE item SELECT * FROM temp_cart limit i, 1;
 	END LOOP GetItems;
 	
     SET order_id = last_insert_id();
