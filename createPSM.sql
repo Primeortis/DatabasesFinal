@@ -136,6 +136,9 @@ SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SET autocommit = 0;
 START TRANSACTION;
 
+DROP TABLE IF EXISTS temp_cart;
+DROP TABLE IF EXISTS item;
+
 CREATE TABLE temp_cart (
 	p_id 		INT PRIMARY KEY,
     quantity	INT,
@@ -199,9 +202,7 @@ IF (out_of_stock_product IS NULL) THEN
 ELSE
 	rollback;
 END IF;
-
-DROP TABLE IF EXISTS temp_cart;
-DROP TABLE IF EXISTS item;
+rollback;
 
 END//
 
