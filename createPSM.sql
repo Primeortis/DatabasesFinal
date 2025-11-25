@@ -7,12 +7,12 @@ CREATE PROCEDURE create_employee(
 	IN id 				INT,
     IN email 			VARCHAR(32),
     IN username 		VARCHAR(32),
-    IN temp_pass 		VARCHAR(32)
+    IN temp_pass 		BINARY(64)
 )
 BEGIN
 	IF (id IS NOT NULL AND email IS NOT NULL AND username IS NOT NULL AND temp_pass IS NOT NULL) THEN
 		INSERT INTO employee
-			VALUES (id, email, username, temp_pass);
+			VALUES (id, username, email, temp_pass);
 	END IF;
 END//
 

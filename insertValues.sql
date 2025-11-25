@@ -15,15 +15,15 @@ DELETE FROM customer;
 DELETE FROM product;
 
 -- Add the Employees
-CALL create_employee (1, "employOne", "empone@gmail.com", "testPass1");
-CALL create_employee (2, "employTwo", "emptwo@gmail.com", "testPass2");
+CALL create_employee (1, "employOne", "empone@gmail.com", sha2("testPass1", 256));
+CALL create_employee (2, "employTwo", "emptwo@gmail.com", sha2("testPass2", 256));
 select e_id, email, username, sha2(password, 256) from employee;
 
 -- Add the Customers
 INSERT INTO customer (c_id, first_name, last_name, email, username, password, address) VALUES 
-	(1, "Ann", "Marie", "am@mtu.edu", "annMarie", "password", "1701 Townsend Dr, Houghton, MI 49931"),
-	(2, "Bob", "Seger", "bs@mtu.edu", "bobSeger", "ThisIsSecure", "1702 Hillside Dr, Hancock, MI 49931"),
-	(3, "Tom", "Hanks", "th@gmail.com", "tomHanks", "TommyIzCool", "1513 Jefferson Rd, Hancock, MI 49931");
+	(1, "Ann", "Marie", "am@mtu.edu", "annMarie", sha2("password", 256), "1701 Townsend Dr, Houghton, MI 49931"),
+	(2, "Bob", "Seger", "bs@mtu.edu", "bobSeger", sha2("ThisIsSecure", 256), "1702 Hillside Dr, Hancock, MI 49931"),
+	(3, "Tom", "Hanks", "th@gmail.com", "tomHanks", sha2("TommyIzCool", 256), "1513 Jefferson Rd, Hancock, MI 49931");
 select c_id, first_name, last_name, email, username, sha2(password, 256), address from customer;
 
 -- Make the Categories

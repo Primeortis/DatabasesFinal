@@ -31,7 +31,7 @@ CREATE TABLE customer(
     last_name		VARCHAR(32) NOT NULL,
     email			VARCHAR(32) NOT NULL,
     username		VARCHAR(32) NOT NULL,
-    password		BINARY(32),
+    password		BINARY(64),
     address			VARCHAR(128) NOT NULL
 );
 
@@ -47,7 +47,7 @@ CREATE TABLE employee(
 	e_id 			INT PRIMARY KEY,
     email			VARCHAR(32) NOT NULL,
     username		VARCHAR(32) NOT NULL,
-    password		BINARY(32)
+    password		BINARY(64) NOT NULL
 );
 
 DROP TABLE IF EXISTS cart_item;
