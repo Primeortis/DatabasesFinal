@@ -36,4 +36,39 @@ function authenticateEmp($user, $passwd) {
         die();
     }
 }
+function addCustomer($user, $password, $email, $firstname, $lastname, $address) {
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("INSERT INTO customer(username, password, email, first_name, last_name, address) VALUES 
+(:user, sha2(:password, 256), :email, :firstname, :lastname, :address);");
+        $statement -> bindParam(":user", $user);
+        $statement -> bindParam(":password", $password);
+        $statement -> bindParam(":email", $email);
+        $statement -> bindParam(":firstname", $firstname);
+        $statement -> bindParam(":lastname", $lastname);
+        $statement -> bindParam(":address", $address);
+        $result = $statement -> execute();
+        $row=$statement -> fetch();
+        $dbh = null;
+        return;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+}
+function changeEmpPass($user, $newPassword) {
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("UPDATE employee SET password = sha2(:password,256) WHERE username = :user;");
+        $statement -> bindParam(":password", $newPassword);
+        $statement -> bindParam(":user", $user);
+        $result = $statement -> execute();
+        $row=$statement -> fetch();
+        $dbh = null;
+        return;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+}
 ?>
