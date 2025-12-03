@@ -1,7 +1,6 @@
 <?php
     session_start();
     require "common.php";
-    require "db.php";
 ?>
 <html>
 <?php
@@ -13,7 +12,7 @@
     }
     if(isset($_POST["username"]) && isset($_POST["password"])){
         if (authenticateCust($_POST["username"], $_POST["password"]) ==1) {
-            $_SESSION["username"] = $_POST["username"];
+            setCustomerSession($_POST['username']);
             header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/cust_main.php' );
         }else{
             echo '

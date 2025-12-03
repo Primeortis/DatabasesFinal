@@ -9,7 +9,7 @@
     }
     if(isset($_POST["username"]) && isset($_POST["password"])){
         if (authenticateEmp($_POST["username"], $_POST["password"]) == 1) {
-            $_SESSION["username"] = $_POST["username"];
+            setEmployeeSession($_POST["username"]);
             if(str_contains($_POST["password"], "test")){
                 header('Location: https://classdb.it.mtu.edu/~jopking/Final/emp_pass_reset.php');
                 echo "<text>Checked for testPass</text>";

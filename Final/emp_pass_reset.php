@@ -1,7 +1,6 @@
 <?php
     session_start();
     require "common.php";
-    require "db.php";
     if(!isset($_SESSION['username'])){
         header('Location: https://classdb.it.mtu.edu/~jopking/Final/emp_login.php');
     }

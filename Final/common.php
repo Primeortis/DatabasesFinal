@@ -1,7 +1,5 @@
 <?php
-session_start();
 require 'db.php';
-
 function authenticateCust($user, $passwd) {
     try {
         $dbh = connectDB();
@@ -17,6 +15,26 @@ function authenticateCust($user, $passwd) {
         die();
     }
 }
+function setCustomerSession($user) {
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("SELECT * FROM customer where username = :username");
+        $statement -> bindParam(":username", $user);
+        $result = $statement -> execute();
+        $info=$statement -> fetch();
+        $dbh = null;
+        
+        $_SESSION["c_id"] = $info[0];
+        $_SESSION["first"] = $info[1];
+        $_SESSION["last"] = $info[2];
+        $_SESSION["email"] = $info[3];
+        $_SESSION["username"] = $info[4];
+        $_SESSION["address"] = $info[6];
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+}
 function authenticateEmp($user, $passwd) {
     try {
         $dbh = connectDB();
@@ -27,6 +45,23 @@ function authenticateEmp($user, $passwd) {
         $row=$statement -> fetch();
         $dbh = null;
         return $row[0];
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+}
+function setEmployeeSession($user) {
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("SELECT * FROM employee where username = :username");
+        $statement -> bindParam(":username", $user);
+        $result = $statement -> execute();
+        $info=$statement -> fetch();
+        $dbh = null;
+        
+        $_SESSION["e_id"] = $info[0];
+        $_SESSION["email"] = $info[1];
+        $_SESSION["username"] = $info[2];
     }catch (PDOException $e) {
         print "Error!" . $e -> getMessage() . "<br/>";
         die();
@@ -83,8 +118,18 @@ function getProduct($pid){
 }
 function getProducts($products){
     $output = [];
-    for($i = 0; $i < array_count_values($products); $i++){
-        $output[$i] = getProduct($products[$i]);
+    for($i = 0; $i < count( $products); $i++){
+        $output[$i] = [];
+        $product = getProduct($products[$i]["p_id"]);
+        $output[$i]["p_id"] = $product['p_id'];
+        $output[$i]["name"] = $product['name'];
+        $output[$i]["desc"] = $product['description'];
+        $output[$i]["price"] = $product['price'];
+        $output[$i]["stock"] = $product['stock'];
+        $output[$i]["adv_thres"] = $product['adv_thres'];
+        $output[$i]["image"] = $product['image'];
+        $output[$i]["discontinued"] = $product['discontinued'];
+        $output[$i]["cat_name"] = $product['cat_name'];
     }
     return $output;
 }
@@ -94,7 +139,7 @@ function getOrder($oid){
         $statement = $dbh -> prepare("SELECT p_id FROM orders NATURAL JOIN order_item WHERE o_id = :oid;");
         $statement -> bindParam(":oid", $oid);
         $result = $statement -> execute();
-        $products=$statement -> fetch();
+        $products=$statement -> fetchAll();
         $dbh = null;
     }catch (PDOException $e) {
         print "Error!" . $e -> getMessage() . "<br/>";
@@ -102,18 +147,25 @@ function getOrder($oid){
     }
     return getProducts($products);
 }
-function getCart($oid){
+function getCart(){
     try {
         $dbh = connectDB();
         $statement = $dbh -> prepare("SELECT p_id FROM cart NATURAL JOIN cart_item WHERE c_id = :cid");
-        $statement -> bindParam(":cid", $_SESSION("c_id"));
+        $c_id = $_SESSION['c_id'];
+        $statement -> bindParam(":cid",$c_id);
         $result = $statement -> execute();
-        $products=$statement -> fetch();
+        $products=$statement -> fetchAll();
         $dbh = null;
     }catch (PDOException $e) {
         print "Error!" . $e -> getMessage() . "<br/>";
         die();
     }
     return getProducts($products);
+}
+function printProducts($products){
+    foreach($products as $product){
+        var_dump($product);
+    echo"</br>";
+    }
 }
 ?>
