@@ -1,6 +1,6 @@
 <?php
     session_start();
-    require "db.php";
+    require "common.php";
     if (isset($_POST["logout"])) {
         session_destroy();
     }
@@ -27,7 +27,7 @@
         <text>username:</text>
         <input type = "text" name="username"> <br>
         <text>password:</text>
-        <input type = "text" name="password"> <br>
+        <input type = "password" name="password"> <br>
         <input type = "submit" value = "login"> 
     </form>
 </html>

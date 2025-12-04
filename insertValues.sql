@@ -34,16 +34,16 @@ CALL insert_category ("Pet Care", "Take care of your fluffy friends!");
 select * from category;
 
 -- Insert Products
-CALL insert_product (1, "Banana", "Yellow Fruit", 0.99, 35, 50, "/images/banana.png", "Food", 1);
-CALL insert_product (2, "Lysol", "Cleaning Spray", 7.50, 12, 10, "/images/lysol.png", "Home Cleaning", 2);
-CALL insert_product (3, "Wipes", "Sanitizing Cloth", 3.99, 17, 20, "/images/wipes.png", "Home Cleaning", 1);
-CALL insert_product (4, "Nintendo Switch", "Nintendo Brand Console", 499.99, 0, 5, "/images/nintendo_switch.png", "Electronics", 2);
-CALL insert_product (5, "Dog Food", "Average corn meal pellets", 21.99, 11, 10, "/images/dog_food.png", "Pet Care", 1);
-CALL insert_product (6, "Cat Food", "Made with hand caught salmon!", 24.99, 5, 7, "/images/cat_food.png", "Pet Care", 2);
-CALL insert_product (7, "Fitbit", "Step Counting Watch", 74.99, 1, 3, "/images/fitbit.png", "Electronics", 1);
-CALL insert_product (8, "Lettuce", "Eww green food", 7.99, 2, 5, "/images/lettuce.png", "Food", 2);
-CALL insert_product (9, "Bread", "Slap some butter on it", 6.50, 45, 60, "/images/bread.png", "Food", 1);
-CALL insert_product (10, "Broom", "Sweep up that mess", 12.25, 6, 5, "/images/broom.png", "Home Cleaning", 2);
+CALL insert_product (1, "Banana", "Yellow Fruit", 0.99, 35, 50, "images/banana.png", "Food", 1);
+CALL insert_product (2, "Lysol", "Cleaning Spray", 7.50, 12, 10, "images/lysol.png", "Home Cleaning", 2);
+CALL insert_product (3, "Wipes", "Sanitizing Cloth", 3.99, 17, 20, "images/wipes.png", "Home Cleaning", 1);
+CALL insert_product (4, "Nintendo Switch", "Nintendo Brand Console", 499.99, 0, 5, "images/nintendo_switch.png", "Electronics", 2);
+CALL insert_product (5, "Dog Food", "Average corn meal pellets", 21.99, 11, 10, "images/dog_food.png", "Pet Care", 1);
+CALL insert_product (6, "Cat Food", "Made with hand caught salmon!", 24.99, 5, 7, "images/cat_food.png", "Pet Care", 2);
+CALL insert_product (7, "Fitbit", "Step Counting Watch", 74.99, 1, 3, "images/fitbit.png", "Electronics", 1);
+CALL insert_product (8, "Lettuce", "Eww green food", 7.99, 2, 5, "images/lettuce.png", "Food", 2);
+CALL insert_product (9, "Bread", "Slap some butter on it", 6.50, 45, 60, "images/bread.png", "Food", 1);
+CALL insert_product (10, "Broom", "Sweep up that mess", 12.25, 6, 5, "images/broom.png", "Home Cleaning", 2);
 UPDATE product SET discontinued = 1 WHERE p_id = 7;
 select * from product;
 

@@ -1,11 +1,14 @@
 <?php
     session_start();
     require "common.php";
-    if(isset($_POST["logout"])){
+    if(isset($_POST["logout"]) or !isset($_SESSION['username'])){
         header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/main.php' );
     }
     if(isset($_POST["checkout"])){
         $_POST["orderDetails"] = checkout();
+    }
+    if(isset($_POST["seeProducts"])){
+        header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/products.php' );
     }
 ?>
 <html>
@@ -15,7 +18,7 @@
     <form method = "POST">
         <input type = 'submit' name = "seeCart" value = "Show My Cart"> </br></br>
         <label>Order Id</label>
-        <input type = 'text' name = "oid">
+        <input type = 'number' name = "oid">
         <input type = 'submit' name = "seeOrder" value = "See Order">
     </form>
 
@@ -48,6 +51,9 @@
         }
     ?>
 
+    <form method = "POST" action="products.php">
+        <input type="submit" name="show products" value="View All Products">
+    </form>
     <form method = "POST" action="cust_pass_reset.php">
         <input type="submit" name="change password" value="Change Password">
     </form>

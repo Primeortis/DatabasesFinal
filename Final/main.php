@@ -6,6 +6,9 @@
 <html>
     <h1>The Store of Your Dreams</h1>
     <h2>We Tried . . .</h2>
+    <form method = "POST" action="products.php">
+        <input type="submit" name="show products" value="View All Products">
+    </form>
     <form method = "POST" action = "cust_login.php">
         <input type = "submit" value = "Customer Login">
     </form>

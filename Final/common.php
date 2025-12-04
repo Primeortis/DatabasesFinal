@@ -117,6 +117,21 @@ function changeEmpPass($user, $newPassword) {
         die();
     }
 }
+function getProduct($pid){
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("SELECT * FROM product WHERE p_id = :pid");
+        $statement -> bindParam(":pid", $pid);
+        $statement -> bindParam(":cid", $_SESSION["c_id"]);
+        $result = $statement -> execute();
+        $row=$statement -> fetch();
+        $dbh = null;
+        return $row;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+}
 function getProductOrder($pid){
     try {
         $dbh = connectDB();
@@ -146,6 +161,23 @@ function getProductCart($pid){
         print "Error!" . $e -> getMessage() . "<br/>";
         die();
     }
+}
+function getProducts($products){
+    $output = [];
+    for($i = 0; $i < count( $products); $i++){
+        $output[$i] = [];
+        $product = getProduct($products[$i]["p_id"]);
+        $output[$i]["p_id"] = $product['p_id'];
+        $output[$i]["name"] = $product['name'];
+        $output[$i]["desc"] = $product['description'];
+        $output[$i]["price"] = $product['price'];
+        $output[$i]["stock"] = $product['stock'];
+        $output[$i]["adv_thres"] = $product['adv_thres'];
+        $output[$i]["image"] = $product['image'];
+        $output[$i]["discontinued"] = $product['discontinued'];
+        $output[$i]["cat_name"] = $product['cat_name'];
+    }
+    return $output;
 }
 function getProductsOrder($products){
     $output = [];
@@ -226,14 +258,51 @@ function getCart(){
     }
     return getProductsCart($products);
 }
+function getCategory($cat_name){
+    try {
+        $dbh = connectDB();
+        if($cat_name != "All"){
+            $statement = $dbh -> prepare(query: "SELECT * FROM product WHERE cat_name = :cat_name;");
+            $statement -> bindParam(":cat_name", $cat_name);
+        }else{
+            $statement = $dbh -> prepare(query: "SELECT * FROM product;");
+        }
+        $result = $statement -> execute();
+        $products=$statement -> fetchAll();
+        $dbh = null;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+    return $products;
+}
+function printProducts($products){
+    foreach($products as $product){
+        echo "<h3>", $product['name'], " at $", $product["price"], "</h3>
+        <img src = ", $product["image"], ">";
+        if(isset($_SESSION["username"])){
+            echo "
+                <form method = 'POST'> 
+                    <input type = 'hidden' name = 'p_id' value = ", $product["p_id"], ">
+                    <label>Quantity</label>
+                    <input type = 'number' name = 'amount'>
+                    <input type = 'submit' name = 'addCart' value = 'Add to Cart'>
+                </form>
+            ";
+        }
+    }
+}
 function printCart($products){
     foreach($products as $product){
-        echo "<h3>",$product['quantity'], "x ", $product['name'], " at $", $product["price"], "</h3>";
+        echo "
+        <h3>",$product['quantity'], "x ", $product['name'], " at $", $product["price"], "</h3>
+        <img src = ", $product["image"], ">";
     }
 }
 function printOrder($products){
     foreach($products as $product){
-        echo "<h3>",$product['quantity'], "x ", $product['name'], " at $", $product["price"], "</h3>";
+        echo "<h3>",$product['quantity'], "x ", $product['name'], " at $", $product["price"], "</h3>
+        <img src = ", $product["image"], ">";
     }
     echo "<h3>Total: $", $products[0]["total"],"<h3>";
     echo "<h3>Status: ", $products[0]["status"],"<h3>";
@@ -257,5 +326,36 @@ function checkout(){
     $output["date"] = $info["date"];
     $output["total"] = $info["total"];
     return $output;
+}
+function categorySelect(){
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("SELECT name FROM category");
+        $result = $statement -> execute();
+        $categories=$statement -> fetchAll();
+        $dbh = null;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+    foreach( $categories as $category ){
+        echo "<option value = '", $category["name"], "'>", $category['name'], '</option>';
+    }//*/
+}
+function addToCart($pid, $quantity){
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("INSERT INTO cart_item VALUES (:pid,:cid,:quantity)");
+        $statement -> bindParam(":pid",$pid);
+        $c_id = $_SESSION['c_id'];
+        $statement -> bindParam(":cid",$c_id);
+        $statement -> bindParam(":quantity",$quantity);
+        $result = $statement -> execute();
+        $categories=$statement -> fetchAll();
+        $dbh = null;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
 }
 ?>
