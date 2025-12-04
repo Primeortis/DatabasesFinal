@@ -2,7 +2,7 @@
     session_start();
     require "common.php";
     if(!isset($_SESSION["username"])){
-        header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/cust_login.php' );
+        header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/main.php' );
     }
     if(isset($_POST["logout"])){
         header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/main.php' );

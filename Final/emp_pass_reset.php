@@ -2,6 +2,7 @@
     session_start();
     require "common.php";
     if(!isset($_SESSION['username'])){
+        session_destroy();
         header('Location: https://classdb.it.mtu.edu/~jopking/Final/emp_login.php');
     }
     if(isset($_POST['newPass'])){
