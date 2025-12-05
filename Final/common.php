@@ -122,7 +122,6 @@ function getProduct($pid){
         $dbh = connectDB();
         $statement = $dbh -> prepare("SELECT * FROM product WHERE p_id = :pid");
         $statement -> bindParam(":pid", $pid);
-        $statement -> bindParam(":cid", $_SESSION["c_id"]);
         $result = $statement -> execute();
         $row=$statement -> fetch();
         $dbh = null;
@@ -296,13 +295,18 @@ function printCart($products){
     foreach($products as $product){
         echo "
         <h3>",$product['quantity'], "x ", $product['name'], " at $", $product["price"], "</h3>
-        <img src = ", $product["image"], ">";
+        <form method = 'POST'>
+            <input type = 'hidden' name = 'p_id' value = '", $product["p_id"], "'>
+            <input type = 'hidden' name = 'seeCart' value = '1'>
+            <input type = 'number' name = 'quantity' value = ''", $product["quantity"], ">
+            <input type = 'submit' name = 'update' value = 'Update Quantity'></br>
+            <input type = 'submit' name = 'remove' value = 'Remove Item'>
+        </form>";
     }
 }
 function printOrder($products){
     foreach($products as $product){
-        echo "<h3>",$product['quantity'], "x ", $product['name'], " at $", $product["price"], "</h3>
-        <img src = ", $product["image"], ">";
+        echo "<h3>",$product['quantity'], "x ", $product['name'], " at $", $product["price"], "</h3>";
     }
     echo "<h3>Total: $", $products[0]["total"],"<h3>";
     echo "<h3>Status: ", $products[0]["status"],"<h3>";
@@ -357,5 +361,38 @@ function addToCart($pid, $quantity){
         print "Error!" . $e -> getMessage() . "<br/>";
         die();
     }
+}
+function updateCartItem($pid, $quantity){
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("UPDATE cart_item SET quantity = :quantity WHERE p_id = :pid AND c_id = :cid;");
+        $statement -> bindParam(":pid",$pid);
+        $c_id = $_SESSION['c_id'];
+        $statement -> bindParam(":cid",$c_id);
+        $statement -> bindParam(":quantity",$quantity);
+        $result = $statement -> execute();
+        $categories=$statement -> fetchAll();
+        $dbh = null;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+
+}
+function deleteCartItem($pid){
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("DELETE FROM cart_item WHERE p_id = :pid AND c_id = :cid");
+        $statement -> bindParam(":pid",$pid);
+        $c_id = $_SESSION['c_id'];
+        $statement -> bindParam(":cid",$c_id);
+        $result = $statement -> execute();
+        $categories=$statement -> fetchAll();
+        $dbh = null;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+
 }
 ?>
