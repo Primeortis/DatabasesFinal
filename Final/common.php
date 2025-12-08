@@ -242,6 +242,21 @@ function getOrder($oid){
     }
     return getProductsOrder($products);
 }
+function getOrders(){
+    try {
+        $dbh = connectDB();
+        $statement = $dbh -> prepare("SELECT o_id, date, total FROM orders where c_id = :cid;");
+        $cid = $_SESSION["c_id"];
+        $statement -> bindParam(":cid", $cid);
+        $result = $statement -> execute();
+        $products=$statement -> fetchAll();
+        $dbh = null;
+    }catch (PDOException $e) {
+        print "Error!" . $e -> getMessage() . "<br/>";
+        die();
+    }
+    return $products;
+}
 function getCart(){
     try {
         $dbh = connectDB();
@@ -278,6 +293,7 @@ function getCategory($cat_name){
 function printProducts($products){
     foreach($products as $product){
         echo "<h3>", $product['name'], " at $", $product["price"], "</h3>
+        <h4>Current Stock:", $product["stock"], "</h4>
         <img src = ", $product["image"], ">";
         if(isset($_SESSION["username"])){
             echo "
@@ -309,27 +325,34 @@ function printOrder($products){
         echo "<h3>",$product['quantity'], "x ", $product['name'], " at $", $product["price"], "</h3>";
     }
     echo "<h3>Total: $", $products[0]["total"],"<h3>";
-    echo "<h3>Status: ", $products[0]["status"],"<h3>";
 }
 function checkout(){
     try {
         $dbh = connectDB();
-        $statement1 = $dbh -> prepare("
-            CALL checkout(1, @id, @pid);");
+        $statement1 = $dbh -> prepare("CALL checkout(1, @id, @pid);");
         $result1 = $statement1 -> execute();
-        $statement2 = $dbh -> prepare("SELECT * from orders where o_id = last_insert_id();");
+        $statement2 = $dbh -> prepare("SELECT @id as o_id, @pid as p_id;");
         $result2 = $statement2 -> execute();
-        $info = $statement2 -> fetch();
+        $checkVals = $statement2 -> fetch();
+        $statement3 = $dbh -> prepare("SELECT * from orders where o_id = last_insert_id();");
+        $result3 = $statement3 -> execute();
+        $info = $statement3 -> fetch();
         $dbh = null;
     }catch (PDOException $e) {
         print "Error!" . $e -> getMessage() . "<br/>";
         die();
     }
-    $output = [];
-    $output["o_id"] = $info["o_id"];
-    $output["date"] = $info["date"];
-    $output["total"] = $info["total"];
-    return $output;
+    if(isset($checkVals["o_id"])){
+        $output = [];
+        $output["o_id"] = $info["o_id"];
+        $output["date"] = $info["date"];
+        $output["total"] = $info["total"];
+        return $output;
+    } else {
+        $output = [];
+        $output["p_id"] = $checkVals["p_id"];
+        return $output;
+    }
 }
 function categorySelect(){
     try {

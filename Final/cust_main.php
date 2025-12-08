@@ -26,6 +26,7 @@
     </form>
     <form method = "POST">
         <input type = 'submit' name = "seeCart" value = "Show My Cart"> </br></br>
+        <input type = 'submit' name = "seePriorOrders" value = "See All Previous Orders"> </br></br>
         <label>Order Id</label>
         <input type = 'number' name = "oid">
         <input type = 'submit' name = "seeOrder" value = "See Order">
@@ -53,10 +54,27 @@
                 echo "<h4 style='color:red'>Not Your Order!</h4>";
             }
         }
+        if(isset($_POST["seePriorOrders"])){
+            $orders = getOrders();
+            echo "<table border='1'><tr><th>Order ID</th><th>Timestamp</th><th>Total</th></tr>";
+            foreach ($orders as $order) {
+                echo "<tr><td>{$order['o_id']}</td><td>{$order['date']}</td><td>{$order['total']}</td></tr>";
+            }
+            echo "</table> </br>";
+        }
         if(isset($_POST["checkout"])){
-            echo "
-            <h3 style = 'color:green'>Order #", $_POST["orderDetails"]['o_id'], " Placed! </h3>
-            <h3 style = 'color:green'>Total: $", $_POST["orderDetails"]["total"], "</h3>";
+            if(isset($_POST["orderDetails"]["p_id"])){
+                $product = getProduct( $_POST["orderDetails"]["p_id"]);
+                echo "
+                <h3 style = 'color:red'>Order Failed! Not enough stock of ", $product["name"], "</h3>
+                <h3 style = 'color:red'>Please reduce to less than ", $product['stock'], " of ", $product ["name"], ".</h3>
+                ";
+            }
+            else{
+                echo "
+                <h3 style = 'color:green'>Order #", $_POST["orderDetails"]['o_id'], " Placed! </h3>
+                <h3 style = 'color:green'>Total: $", $_POST["orderDetails"]["total"], "</h3>";
+            }
         }
     ?>
     <form method = "POST" action="cust_pass_reset.php">
