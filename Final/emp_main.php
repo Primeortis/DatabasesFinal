@@ -83,7 +83,7 @@ if (isset($_POST["changePrice"])) {
         $dbh->commit();
         $dbh = null;
 
-        $message = "Price updated from $old to $newprice for product $pid.";
+        $message = "Price updated from $oldprice to $newprice for product $pid.";
 
     } catch (PDOException $e) {
         $dbh->rollBack();
@@ -190,9 +190,13 @@ if (!empty($price_history)) {
     //html skillz flexxxxxxx
     $product = getProduct($_POST["product_id"]);
     echo"<h4>Current Item: #", $_POST["product_id"], " - ", $product['name'],"</h4>";
-    echo "<table border='1'><tr><th>Old Price</th><th>New Price</th><th>Time</th><th>Employee</th></tr>";
+    echo "<table border='1'><tr><th>Old Price</th><th>New Price</th><th>% Change</th><th>Time</th><th>Employee</th></tr>";
     foreach ($price_history as $p) {
-        echo "<tr><td>{$p['price_before']}</td><td>{$p['price_after']}</td><td>{$p['time']}</td><td>{$p['e_id']}</td></tr>";
+        $percentChange = 0;
+        if($p["price_before"] != 0.00){
+            $percentChange = $p["price_after"]/$p["price_before"]*100 - 100;
+        }
+        echo "<tr><td>{$p['price_before']}</td><td>{$p['price_after']}</td><td>$percentChange</td><td>{$p['time']}</td><td>{$p['e_id']}</td></tr>";
     }
     echo "</table>";
 }

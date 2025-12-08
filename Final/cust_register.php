@@ -1,6 +1,9 @@
 <?php
     session_start();
-    require "db.php";
+    require "common.php";
+    if(isset($_POST["return"])){
+        header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/main.php' );
+    }
 ?>
 <html>
     <?php
@@ -30,5 +33,8 @@
         <label>Password</label>
         <input type = "text" name = "password"> </br>
         <input type = "submit" value = "Register Account">
+    </form>
+    <form method = "POST" action="main.php">
+        <input type="submit" name="return" value="Return to Main">
     </form>
 </html>

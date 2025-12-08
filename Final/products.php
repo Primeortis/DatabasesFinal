@@ -4,22 +4,26 @@
     if(isset($_POST["logout"])){
         header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/main.php' );
     }
-    if(isset($_POST['addCard'])){
-        
+    if(isset($_POST['addCart'])){
+        addToCart(pid: $_POST["p_id"], quantity: $_POST["quantity"]);
     }
 ?>
 <html>
     <h1>Welcome to The Store of Your Dreams</h1>
     <h2>At least we hope it is . . .</h2>
-    <form method = 'POST' action = 'main.php'>
-        <input type = 'submit' value = 'Return to Main Menu'>
-    </form>
     <?php
         if(isset($_SESSION["username"])){
             echo"
                 <form method = 'POST' action = 'cust_main.php'>
-                    <input type = 'submit' value = 'Return to Cart'>
+                    <input type = 'submit' value = 'Return to Main Menu'>
                 </form>
+            ";
+        } else {
+            echo"
+                <form method = 'POST' action = 'main.php'>
+                    <input type = 'submit' value = 'Return to Main Menu'>
+                </form>
+                <h3>Please login to add items to cart!</h3>
             ";
         }
     ?>

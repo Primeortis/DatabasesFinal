@@ -3,6 +3,8 @@
     require "common.php";
 ?>
 <html>
+    <h1>Customer Login</h1>
+    <h2>Please input your credentials</h2>
 <?php
     if (isset($_POST["logout"])) {
         session_destroy();
@@ -29,5 +31,8 @@
     <text>password:</text>
     <input type = "password" name="password"> <br>
     <input type = "submit" value = "login"> 
+</form>
+<form method = "POST" action="main.php">
+    <input type="submit" name="return" value="Return to Main Menu">
 </form>
 </html>

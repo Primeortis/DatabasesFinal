@@ -23,11 +23,16 @@
     }
 ?>
 <html>
+    <h1>Employee Login</h1>
+    <h2>You know the drill</h2>
     <form method="POST">
         <text>username:</text>
         <input type = "text" name="username"> <br>
         <text>password:</text>
         <input type = "password" name="password"> <br>
         <input type = "submit" value = "login"> 
+    </form>
+    <form method = "POST" action="main.php">
+        <input type="submit" name="return" value="Return to Main Menu">
     </form>
 </html>

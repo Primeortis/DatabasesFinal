@@ -23,4 +23,7 @@
         <input type="text" name = "newPass">
         <input type="submit" value = "Change Password">
     </form>
+    <form method = "POST" action="cust_main.php">
+        <input type="submit" name="return" value="Return to Main Menu">
+    </form>
 </html>

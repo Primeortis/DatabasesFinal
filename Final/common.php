@@ -131,11 +131,12 @@ function getProduct($pid){
         die();
     }
 }
-function getProductOrder($pid){
+function getProductOrder($pid, $oid){
     try {
         $dbh = connectDB();
-        $statement = $dbh -> prepare("SELECT * FROM (SELECT o_id, product.p_id, name, description, order_item.price, cat_name, quantity, image FROM product JOIN order_item ON product.p_id = order_item.p_id) AS t1 NATURAL JOIN orders WHERE p_id = :pid and c_id = :cid");
+        $statement = $dbh -> prepare("SELECT * FROM (SELECT o_id, product.p_id, name, description, order_item.price, cat_name, quantity, image FROM product JOIN order_item ON product.p_id = order_item.p_id) AS t1 NATURAL JOIN orders WHERE p_id = :pid and c_id = :cid and o_id = :oid");
         $statement -> bindParam(":pid", $pid);
+        $statement -> bindParam(":oid", $oid);
         $statement -> bindParam(":cid", $_SESSION["c_id"]);
         $result = $statement -> execute();
         $row=$statement -> fetch();
@@ -178,11 +179,11 @@ function getProducts($products){
     }
     return $output;
 }
-function getProductsOrder($products){
+function getProductsOrder($products, $oid){
     $output = [];
     for($i = 0; $i < count( $products); $i++){
         $output[$i] = [];
-        $product = getProductOrder($products[$i]["p_id"]);
+        $product = getProductOrder($products[$i]["p_id"], $oid);
         $output[$i]["p_id"] = $product['p_id'];
         $output[$i]["name"] = $product['name'];
         $output[$i]["desc"] = $product['description'];
@@ -240,7 +241,7 @@ function getOrder($oid){
         print "Error!" . $e -> getMessage() . "<br/>";
         die();
     }
-    return getProductsOrder($products);
+    return getProductsOrder($products, $oid);
 }
 function getOrders(){
     try {
@@ -300,7 +301,7 @@ function printProducts($products){
                 <form method = 'POST'> 
                     <input type = 'hidden' name = 'p_id' value = ", $product["p_id"], ">
                     <label>Quantity</label>
-                    <input type = 'number' name = 'amount'>
+                    <input type = 'number' name = 'quantity'>
                     <input type = 'submit' name = 'addCart' value = 'Add to Cart'>
                 </form>
             ";
