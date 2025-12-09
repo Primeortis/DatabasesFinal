@@ -5,10 +5,17 @@
         header( 'Location: https://classdb.it.mtu.edu/~jopking/Final/main.php' );
     }
     if(isset($_POST['addCart'])){
+        if ($qty === "" || !is_numeric($qty) || $qty <= 0){
+            $_SESSION['error'] = "Please enter a valid quantity.";
+            header("Location: https://classdb.it.mtu.edu/~jopking/Final/products.php");
+            exit();
+        }
         addToCart(pid: $_POST["p_id"], quantity: $_POST["quantity"]);
     }
 ?>
 <html>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
     <h1>Welcome to The Store of Your Dreams</h1>
     <h2>At least we hope it is . . .</h2>
     <?php
@@ -23,7 +30,7 @@
                 <form method = 'POST' action = 'main.php'>
                     <input type = 'submit' value = 'Return to Main Menu'>
                 </form>
-                <h3>Please login to add items to cart!</h3>
+                <h3 style=\"text-align:left; padding-top:10\">Please login to add items to cart!</h3>
             ";
         }
     ?>

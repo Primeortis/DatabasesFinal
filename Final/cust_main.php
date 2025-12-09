@@ -18,19 +18,25 @@
     }
 ?>
 <html>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
     <h1>Welcome to The Store of Your Dreams</h1>
     <h2>At least we hope it is . . .</h2>
 
-    <form method = "POST" action="products.php">
-        <input type="submit" name="show products" value="View All Products">
-    </form>
-    <form method = "POST">
-        <input type = 'submit' name = "seeCart" value = "Show My Cart"> </br></br>
-        <input type = 'submit' name = "seePriorOrders" value = "See All Previous Orders"> </br></br>
-        <label>Order Id</label>
-        <input type = 'number' name = "oid">
-        <input type = 'submit' name = "seeOrder" value = "See Order">
-    </form>
+    <h3 style="font-family: 'Dancing Script', 'Segoe Script', cursive; font-size: 24px; font-weight: 1; text-align: center"> How are you, <?php echo htmlspecialchars($_SESSION['username']); ?>?</h3>
+
+    <div style = "padding: 20px 20px 0 20px;">
+        <form method = "POST" action="products.php">
+            <input type="submit" name="show products" value="View All Products">
+        </form>
+        <form method = "POST">
+            <input type = 'submit' name = "seeCart" value = "Show My Cart"> </br></br>
+            <input type = 'submit' name = "seePriorOrders" value = "See All Previous Orders"> </br></br>
+            <label>Order Id</label>
+            <input type = 'number' name = "oid">
+            <input type = 'submit' name = "seeOrder" value = "See Order">
+        </form>
+    </div>
 
     <?php
         if(isset($_POST['seeCart'])){
@@ -51,7 +57,7 @@
                 $products = getOrder(($_POST["oid"]));
                 printOrder($products);
             } else {
-                echo "<h4 style='color:red'>Not Your Order!</h4>";
+                echo "<h4 style='color:red'>No results found or not your order!</h4>";
             }
         }
         if(isset($_POST["seePriorOrders"])){

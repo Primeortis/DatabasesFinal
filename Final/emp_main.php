@@ -133,79 +133,83 @@ if (isset($_POST["showPriceHistory"])) {
 
 ?>
 <html>
-<body>
-<h1>Welcome to The Store, where you Work™</h1>
-<h2>We don't pay you enough, but you Work™ anyway!</h2>
+    <body>
+        <link rel="icon" href="favicon.png" type="image/png">
+        <link rel="stylesheet" href="styles.css">
+        <h1>Welcome to The Store, where you Work™</h1>
+        <h2>We don't pay you enough, but you Work™ anyway!</h2>
 
-<?php if ($message !== "") echo "<p><b>$message</b></p>"; ?>
+        <?php if ($message !== "") echo "<p><b>$message</b></p>"; ?>
 
-<hr>
+        <br>
 
-<h2>Restock Product</h2>
-<form method="POST">
-    Product ID: <input type="number" name="product_id" required>
-    Add Amount: <input type="number" name="amount" required>
-    <input type="submit" name="restock" value="Restock">
-</form>
+        <h2 style = "text-align:left">Restock Product</h2>
+        <form method="POST">
+            Product ID: <input type="number" name="product_id" required>
+            &emsp;Add Amount: <input type="number" name="amount" required>
+            <input type="submit" name="restock" value="Restock">
+        </form>
 
-<hr>
+        <br><hr>
 
-<h2>Change Product Price</h2>
-<form method="POST">
-    Product ID: <input type="number" name="product_id" required>
-    New Price: <input type="text" name="newprice" required>
-    <input type="submit" name="changePrice" value="Change Price">
-</form>
+        <h2 style = "text-align:left">Change Product Price</h2>
+        <form method="POST">
+            Product ID: <input type="number" name="product_id" required>
+            &emsp;New Price: <input type="text" name="newprice" required>
+            <input type="submit" name="changePrice" value="Change Price">
+        </form>
 
-<hr>
+        <br><hr>
 
-<h2>Stock History</h2>
-<form method="POST">
-    Product ID: <input type="number" name="product_id" required>
-    <input type="submit" name="showStockHistory" value="View Stock History">
-</form>
+        <h2 style = "text-align:left">Stock History</h2>
+        <form method="POST">
+            Product ID: <input type="number" name="product_id" required>
+            <input type="submit" name="showStockHistory" value="View Stock History">
+        </form>
 
-<?php
-if (!empty($stock_history)) {
-    $product = getProduct($_POST["product_id"]);
-    echo"<h4>Current Item: #", $_POST["product_id"], " - ", $product['name'],"</h4>";
-    echo "<table border='1'><tr><th>Change</th><th>New Stock</th><th>Reason</th><th>Time</th><th>Employee</th><th>Order #</th></tr>";
-    foreach ($stock_history as $s) {
-        echo "<tr><td>{$s['change_amount']}</td><td>{$s['stock_after']}</td><td>{$s['operation']}</td><td>{$s['time']}</td><td>{$s['e_id']}</td><td>{$s['o_id']}</td></tr>";
-    }
-    echo "</table>";
-}
-?>
-
-<hr>
-
-<h2>Price History</h2>
-<form method="POST">
-    Product ID: <input type="number" name="product_id" required>
-    <input type="submit" name="showPriceHistory" value="View Price History">
-</form>
-
-<?php
-if (!empty($price_history)) {
-    //html skillz flexxxxxxx
-    $product = getProduct($_POST["product_id"]);
-    echo"<h4>Current Item: #", $_POST["product_id"], " - ", $product['name'],"</h4>";
-    echo "<table border='1'><tr><th>Old Price</th><th>New Price</th><th>% Change</th><th>Time</th><th>Employee</th></tr>";
-    foreach ($price_history as $p) {
-        $percentChange = 0;
-        if($p["price_before"] != 0.00){
-            $percentChange = $p["price_after"]/$p["price_before"]*100 - 100;
+        <?php
+        if (!empty($stock_history)) {
+            $product = getProduct($_POST["product_id"]);
+            echo"<h4>Current Item: #", $_POST["product_id"], " - ", $product['name'],"</h4>";
+            echo "<table border='1'><tr><th>Change</th><th>New Stock</th><th>Reason</th><th>Time</th><th>Employee</th><th>Order #</th></tr>";
+            foreach ($stock_history as $s) {
+                echo "<tr><td>{$s['change_amount']}</td><td>{$s['stock_after']}</td><td>{$s['operation']}</td><td>{$s['time']}</td><td>{$s['e_id']}</td><td>{$s['o_id']}</td></tr>";
+            }
+            echo "</table>";
         }
-        echo "<tr><td>{$p['price_before']}</td><td>{$p['price_after']}</td><td>$percentChange</td><td>{$p['time']}</td><td>{$p['e_id']}</td></tr>";
-    }
-    echo "</table>";
-}
-?>
+        ?>
 
-<hr>
-<form method="POST" action="main.php">
-    <input type="submit" value="Logout">
-</form>
+        <br><hr>
 
-</body>
+        <h2 style = "text-align:left">Price History</h2>
+        <form method="POST">
+            Product ID: <input type="number" name="product_id" required>
+            <input type="submit" name="showPriceHistory" value="View Price History">
+        </form>
+
+        <?php
+        if (!empty($price_history)) {
+            //html skillz flexxxxxxx
+            $product = getProduct($_POST["product_id"]);
+            echo"<h4>Current Item: #", $_POST["product_id"], " - ", $product['name'],"</h4>";
+            echo "<table border='1'><tr><th>Old Price</th><th>New Price</th><th>% Change</th><th>Time</th><th>Employee</th></tr>";
+            foreach ($price_history as $p) {
+                $percentChange = 0;
+                if($p["price_before"] != 0.00){
+                    $percentChange = $p["price_after"]/$p["price_before"]*100 - 100;
+                }
+                echo "<tr><td>{$p['price_before']}</td><td>{$p['price_after']}</td><td>$percentChange</td><td>{$p['time']}</td><td>{$p['e_id']}</td></tr>";
+            }
+            echo "</table>";
+        }
+        ?>
+
+        <br><hr><br>
+        <form method="POST" action="main.php">
+            <input type="submit" value="Logout">
+        </form>
+
+        <img style = "height: 300; width:auto; padding-top:40" src="MotivationalPhoto.jpg" alt="Employees are not permitted to view the Motivational Image™ for more than 15 minutes per day.">
+
+    </body>
 </html>

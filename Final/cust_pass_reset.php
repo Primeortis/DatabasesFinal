@@ -12,6 +12,8 @@
     }
 ?>
 <html>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
     <h1>
         Customer Password Reset
     </h1>
@@ -20,7 +22,7 @@
     </h2>
     <form method = "POST">
         <label>New Password</label>
-        <input type="text" name = "newPass">
+        <input type="text" name = "newPass" required>
         <input type="submit" value = "Change Password">
     </form>
     <form method = "POST" action="cust_main.php">

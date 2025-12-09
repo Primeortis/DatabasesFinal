@@ -23,8 +23,10 @@
     }
 ?>
 <html>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
     <h1>Employee Login</h1>
-    <h2>You know the drill</h2>
+    <h2>You know the Drill™</h2>
     <form method="POST">
         <text>username:</text>
         <input type = "text" name="username"> <br>

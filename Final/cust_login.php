@@ -3,6 +3,8 @@
     require "common.php";
 ?>
 <html>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
     <h1>Customer Login</h1>
     <h2>Please input your credentials</h2>
 <?php
@@ -27,9 +29,9 @@
 ?>
 <form method="POST">
     <text>username:</text>
-    <input type = "text" name="username"> <br>
+    <input type = "text" name="username" required> <br>
     <text>password:</text>
-    <input type = "password" name="password"> <br>
+    <input type = "password" name="password" required> <br>
     <input type = "submit" value = "login"> 
 </form>
 <form method = "POST" action="main.php">

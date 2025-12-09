@@ -7,7 +7,7 @@
     }
     if(isset($_POST['newPass'])){
         if(str_contains($_POST["newPass"], "test")){
-            echo "<body>Your new password appears to still be a temporary password, please change it.</body>";
+            echo "<body>Your new password appears to still be a temporary password; please change it.</body>";
         }
         else{
             changeEmpPass($_SESSION["username"], $_POST["newPass"]);
@@ -17,6 +17,8 @@
     }
 ?>
 <html>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
     <h1>
         Employee Password Reset
     </h1>
